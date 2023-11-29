@@ -22,6 +22,108 @@ namespace Backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("Backend.Models.Ingredient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Ingredients");
+                });
+
+            modelBuilder.Entity("Backend.Models.Recipe", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CookingTime")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CookingTimeMH")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Difficulty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IdKorisnika")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Kategory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NumberOfServings")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PreparationTime")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PreparationTimeMH")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("Backend.Models.RecipeIngredients", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("IdIngredient")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdRecipe")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IngredientId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UnitOfMeasure")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngredientId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("RecipeIngredients");
+                });
+
             modelBuilder.Entity("Backend.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -53,6 +155,30 @@ namespace Backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Backend.Models.Recipe", b =>
+                {
+                    b.HasOne("Backend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Backend.Models.RecipeIngredients", b =>
+                {
+                    b.HasOne("Backend.Models.Ingredient", "Ingredient")
+                        .WithMany()
+                        .HasForeignKey("IngredientId");
+
+                    b.HasOne("Backend.Models.Recipe", "Recipe")
+                        .WithMany()
+                        .HasForeignKey("RecipeId");
+
+                    b.Navigation("Ingredient");
+
+                    b.Navigation("Recipe");
                 });
 #pragma warning restore 612, 618
         }

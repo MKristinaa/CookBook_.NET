@@ -7,6 +7,8 @@ using System.Security.Claims;
 using System.Text;
 using Backend.Models;
 using Backend.Interfaces;
+using Microsoft.Extensions.Configuration;
+
 
 namespace MySecrets.Controllers
 {
@@ -25,7 +27,7 @@ namespace MySecrets.Controllers
 
 
         [HttpPost("/login")]
-        public async Task<IActionResult> Login(UserDto loginReq)
+        public async Task<IActionResult> Login(loginInfoDto loginReq)
         {
 
             Console.WriteLine(loginReq.Username);
@@ -34,7 +36,7 @@ namespace MySecrets.Controllers
 
             if (user == null)
             {
-                return Ok(null);
+                return Unauthorized("Pogrešno korisničko ime ili lozinka.");
 
             }
 
@@ -54,6 +56,9 @@ namespace MySecrets.Controllers
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim("Name", user.Name),
+                new Claim("Lastname", user.Lastname),
+                new Claim("Image", user.Image)
             };
 
             var signingCredentials = new SigningCredentials(
@@ -89,5 +94,27 @@ namespace MySecrets.Controllers
             await uow.SaveAsync();
             return Ok(loginReq);
         }
+
+        [HttpGet("/getInfo")]
+        public async Task<IActionResult> getInfo()
+        {
+            var token = Request.Headers["Authorization"].ToString();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("No token provided");
+            }
+
+            token = token.Split(' ')[1];
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+
+            var claims = jwtToken?.Claims.ToDictionary(c => c.Type, c => c.Value);
+
+            return Ok(claims);
+        }
+
+
     }
 }
