@@ -19,9 +19,8 @@ namespace Backend.Models
         public string? Image { get; set; }
         public string? Description { get; set; }
 
-
+        [ForeignKey("User")]
         public int IdKorisnika { get; set; }
-        public User? User { get; set; }
 
     }
 }

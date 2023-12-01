@@ -1,7 +1,10 @@
-﻿namespace Backend.Dtos
+﻿using Backend.Models;
+
+namespace Backend.Dtos
 {
     public class NewRecipeDTO
     {
+        public int IdKorisnika { get; set; }
         public string? Name { get; set; }
         public string? Category { get; set; }
         public int? PreparationTime { get; set; }

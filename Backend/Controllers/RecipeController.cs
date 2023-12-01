@@ -23,6 +23,7 @@ namespace Backend.Controllers
             {
                 var recipe = new Recipe
                 {
+                    IdKorisnika = recipeWithIngredients.RecipeInfo.IdKorisnika,
                     Name = recipeWithIngredients.RecipeInfo.Name,
                     Kategory = recipeWithIngredients.RecipeInfo.Category,
                     PreparationTime = recipeWithIngredients.RecipeInfo.PreparationTime,
@@ -83,6 +84,106 @@ namespace Backend.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"Unable to retrieve recipes with ingredients: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetAllRecipesWithIngredients/{idKorisnika}")]
+        public IActionResult GetAllRecipesWithIngredients(int idKorisnika)
+        {
+            try
+            {
+                var recipesWithIngredients = dc.RecipeIngredients
+                    .Include(ri => ri.Recipe)
+                    .Include(ri => ri.Ingredient)
+                    .Where(ri => ri.Recipe.IdKorisnika == idKorisnika)
+                    .ToList();
+
+                return Ok(recipesWithIngredients);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Unable to retrieve recipes with ingredients: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetAllRecipesWithIngredientsByIdRecipe/{idRecepta}")]
+        public IActionResult GetAllRecipesWithIngredientsByIdRecipe(int idRecepta)
+        {
+            try
+            {
+                var recipesWithIngredients = dc.RecipeIngredients
+                    .Include(ri => ri.Recipe)
+                    .Include(ri => ri.Ingredient)
+                    .Where(ri => ri.Recipe.Id == idRecepta)
+                    .ToList();
+
+                return Ok(recipesWithIngredients);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Unable to retrieve recipes with ingredients: {ex.Message}");
+            }
+        }
+
+
+        [HttpGet("GetUserDataByRecipeId/{idRecepta}")]
+        public IActionResult GetUserDataByRecipeId(int idRecepta)
+        {
+            try
+            {
+                var userData = dc.Recipes
+                    .Where(r => r.Id == idRecepta)
+                    .Join(dc.Users,
+                        recipe => recipe.IdKorisnika,
+                        user => user.Id,
+                        (recipe, user) => new
+                        {
+                            UserId = user.Id,
+                            UserName = user.Name,
+                            UserLastname = user.Lastname,
+                            UserImage = user.Image
+                        })
+                    .FirstOrDefault();
+
+                if (userData == null)
+                {
+                    return NotFound("Recipe or user not found");
+                }
+
+                return Ok(userData);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Unable to retrieve user data: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetUserDataByUserId/{userId}")]
+        public IActionResult GetUserDataByUserId(int userId)
+        {
+            try
+            {
+                var user = dc.Users
+                    .FirstOrDefault(u => u.Id == userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var userData = new
+                {
+                    UserId = user.Id,
+                    UserName = user.Name,
+                    UserLastname = user.Lastname,
+                    UserImage = user.Image
+                };
+
+                return Ok(userData);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Unable to retrieve user data: {ex.Message}");
             }
         }
 
