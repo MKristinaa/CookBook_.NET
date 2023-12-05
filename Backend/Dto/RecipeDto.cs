@@ -1,12 +1,10 @@
-﻿using Backend.Models;
-
-namespace Backend.Dtos
+﻿namespace Backend.Dto
 {
-    public class NewRecipeDTO
+    public class RecipeDto
     {
-        public int IdKorisnika { get; set; }
+        public int Id { get; set; }
         public string? Name { get; set; }
-        public string? Category { get; set; }
+        public string? Kategory { get; set; }
         public int? PreparationTime { get; set; }
         public string? PreparationTimeMH { get; set; }
         public int? NumberOfServings { get; set; }
@@ -15,5 +13,8 @@ namespace Backend.Dtos
         public string? Difficulty { get; set; }
         public string? Image { get; set; }
         public string? Description { get; set; }
+        public int UserId { get; set; }
+
+        public List<IngridientDto> Ingredients { get; set; }
     }
 }

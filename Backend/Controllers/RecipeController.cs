@@ -1,4 +1,4 @@
-﻿using Backend.Dtos;
+﻿using Backend.Dto;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,146 +17,194 @@ namespace Backend.Controllers
         }
 
         [HttpPost("AddRecipe")]
-        public async Task<IActionResult> AddRecipe([FromBody] NewRecipeWithIngredientsDTO recipeWithIngredients)
+        public void AddNewRecipe(NewRecipeDTO newRecipeDto)
+        {
+            var newRecipe = new Recipe
+            {
+                Name = newRecipeDto.Name,
+                Kategory = newRecipeDto.Kategory,
+                PreparationTime = newRecipeDto.PreparationTime,
+                PreparationTimeMH = newRecipeDto.PreparationTimeMH,
+                NumberOfServings = newRecipeDto.NumberOfServings,
+                CookingTime = newRecipeDto.CookingTime,
+                CookingTimeMH = newRecipeDto.CookingTimeMH,
+                Difficulty = newRecipeDto.Difficulty,
+                Image = newRecipeDto.Image,
+                Description = newRecipeDto.Description,
+                UserId = newRecipeDto.UserId
+            };
+
+            var ingredients = newRecipeDto.Ingredients.Select(i => new Ingredient
+            {
+                Name = i.Name,
+                Quantity = i.Quantity,
+                UnitOfMeasure = i.UnitOfMeasure,
+                Recipe = newRecipe 
+            }).ToList();
+
+            newRecipe.Ingredients = ingredients;
+
+            dc.Recipes.Add(newRecipe);
+            dc.SaveChanges();
+        }
+        [HttpGet("GetAllRecipes")]
+        public IActionResult GetAllRecipes()
         {
             try
             {
-                var recipe = new Recipe
-                {
-                    IdKorisnika = recipeWithIngredients.RecipeInfo.IdKorisnika,
-                    Name = recipeWithIngredients.RecipeInfo.Name,
-                    Kategory = recipeWithIngredients.RecipeInfo.Category,
-                    PreparationTime = recipeWithIngredients.RecipeInfo.PreparationTime,
-                    PreparationTimeMH = recipeWithIngredients.RecipeInfo.PreparationTimeMH,
-                    NumberOfServings = recipeWithIngredients.RecipeInfo.NumberOfServings,
-                    CookingTime = recipeWithIngredients.RecipeInfo.CookingTime,
-                    CookingTimeMH = recipeWithIngredients.RecipeInfo.CookingTimeMH,
-                    Difficulty = recipeWithIngredients.RecipeInfo.Difficulty,
-                    Image = recipeWithIngredients.RecipeInfo.Image,
-                    Description = recipeWithIngredients.RecipeInfo.Description
-                };
-
-                dc!.Recipes?.Add(recipe);
-                await dc.SaveChangesAsync();
-
-                foreach (var ingredientInfo in recipeWithIngredients.IngredientsInfo)
-                {
-                    var ingredient = new Ingredient
+                var recipesWithIngredients = dc.Recipes
+                    .Include(r => r.Ingredients)
+                    .Select(r => new RecipeDto
                     {
-                        Name = ingredientInfo.IngredientName
-                    };
-
-                    dc.Ingredients!.Add(ingredient);
-                    await dc.SaveChangesAsync();
-
-                    var recipeIngredient = new RecipeIngredients
-                    {
-                        Quantity = ingredientInfo.Quantity,
-                        UnitOfMeasure = ingredientInfo.UnitOfMeasure,
-                        Recipe = recipe,
-                        Ingredient = ingredient
-                    };
-
-                    dc.RecipeIngredients.Add(recipeIngredient);
-                    await dc.SaveChangesAsync();
-                }
-
-                return Ok(recipe);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Unable to add recipe: {ex.Message}");
-            }
-        }
-
-        [HttpGet("GetAllRecipesWithIngredients")]
-        public IActionResult GetAllRecipesWithIngredients()
-        {
-            try
-            {
-                var recipesWithIngredients = dc.RecipeIngredients
-                    .Include(ri => ri.Recipe)
-                    .Include(ri => ri.Ingredient)
-                    .ToList();
-
-                return Ok(recipesWithIngredients);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Unable to retrieve recipes with ingredients: {ex.Message}");
-            }
-        }
-
-        [HttpGet("GetAllRecipesWithIngredients/{idKorisnika}")]
-        public IActionResult GetAllRecipesWithIngredients(int idKorisnika)
-        {
-            try
-            {
-                var recipesWithIngredients = dc.RecipeIngredients
-                    .Include(ri => ri.Recipe)
-                    .Include(ri => ri.Ingredient)
-                    .Where(ri => ri.Recipe.IdKorisnika == idKorisnika)
-                    .ToList();
-
-                return Ok(recipesWithIngredients);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Unable to retrieve recipes with ingredients: {ex.Message}");
-            }
-        }
-
-        [HttpGet("GetAllRecipesWithIngredientsByIdRecipe/{idRecepta}")]
-        public IActionResult GetAllRecipesWithIngredientsByIdRecipe(int idRecepta)
-        {
-            try
-            {
-                var recipesWithIngredients = dc.RecipeIngredients
-                    .Include(ri => ri.Recipe)
-                    .Include(ri => ri.Ingredient)
-                    .Where(ri => ri.Recipe.Id == idRecepta)
-                    .ToList();
-
-                return Ok(recipesWithIngredients);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Unable to retrieve recipes with ingredients: {ex.Message}");
-            }
-        }
-
-
-        [HttpGet("GetUserDataByRecipeId/{idRecepta}")]
-        public IActionResult GetUserDataByRecipeId(int idRecepta)
-        {
-            try
-            {
-                var userData = dc.Recipes
-                    .Where(r => r.Id == idRecepta)
-                    .Join(dc.Users,
-                        recipe => recipe.IdKorisnika,
-                        user => user.Id,
-                        (recipe, user) => new
+                        Id = r.Id,
+                        Name = r.Name,
+                        Kategory = r.Kategory,
+                        PreparationTime = r.PreparationTime,
+                        PreparationTimeMH = r.PreparationTimeMH,
+                        NumberOfServings = r.NumberOfServings,
+                        CookingTime = r.CookingTime,
+                        CookingTimeMH = r.CookingTimeMH,
+                        Difficulty = r.Difficulty,
+                        Image = r.Image,
+                        Description = r.Description,
+                        UserId = r.UserId,
+                        Ingredients = r.Ingredients.Select(i => new IngridientDto
                         {
-                            UserId = user.Id,
-                            UserName = user.Name,
-                            UserLastname = user.Lastname,
-                            UserImage = user.Image
-                        })
+                            Name = i.Name,
+                            Quantity = i.Quantity,
+                            UnitOfMeasure = i.UnitOfMeasure
+                        }).ToList()
+                    })
+                    .ToList();
+
+                return Ok(recipesWithIngredients);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+        }
+
+        [HttpGet("GetUserByRecipeId/{recipeId}")]
+        public IActionResult GetUserByRecipeId(int recipeId)
+        {
+            try
+            {
+                var user = dc.Recipes
+                    .Where(r => r.Id == recipeId)
+                    .Select(r => new
+                    {
+                        UserId = r.User.Id,
+                        UserName = r.User.Name,
+                        UserLastname = r.User.Lastname,
+                        UserImage = r.User.Image
+                    })
                     .FirstOrDefault();
 
-                if (userData == null)
+                if (user == null)
                 {
-                    return NotFound("Recipe or user not found");
+                    return NotFound($"Recipe with ID {recipeId} not found.");
                 }
 
-                return Ok(userData);
+                return Ok(user);
             }
             catch (Exception ex)
             {
-                return BadRequest($"Unable to retrieve user data: {ex.Message}");
+                return StatusCode(500, $"Internal server error: {ex}");
             }
         }
+
+        [HttpGet("GetRecipesByUserId/{userId}")]
+        public IActionResult GetRecipesByUserId(int userId)
+        {
+            try
+            {
+                var userRecipes = dc.Users
+                    .Where(u => u.Id == userId)
+                    .SelectMany(u => u.Recipes) 
+                    .Include(r => r.Ingredients) 
+                    .Select(r => new
+                    {
+                        Id = r.Id,
+                        Name = r.Name,
+                        Kategory = r.Kategory,
+                        PreparationTime= r.PreparationTime,
+                        PreparationTimeMH=r.PreparationTimeMH,
+                        NumberOfServings=r.NumberOfServings,
+                        CookingTime=r.CookingTime,
+                        CookingTimeMH=r.CookingTimeMH,
+                        Difficulty=r.Difficulty,
+                        Image=r.Image,
+                        Description=r.Description,
+                        Ingredients = r.Ingredients.Select(i => new
+                        {
+                            Id = i.Id,
+                            Name = i.Name,
+                            Quantity = i.Quantity,
+                            UnitOfMeasure = i.UnitOfMeasure
+                        }).ToList()
+                    })
+                    .ToList();
+
+                if (userRecipes == null || !userRecipes.Any())
+                {
+                    return NotFound($"No recipes found for user with ID {userId}.");
+                }
+
+                return Ok(userRecipes);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+        }
+
+        [HttpGet("GetRecipeWithIngredientsById/{recipeId}")]
+        public IActionResult GetRecipeWithIngredientsById(int recipeId)
+        {
+            try
+            {
+                var recipeWithIngredients = dc.Recipes
+                    .Include(r => r.Ingredients)
+                    .FirstOrDefault(r => r.Id == recipeId);
+
+                if (recipeWithIngredients == null)
+                {
+                    return NotFound();
+                }
+
+                var recipeDto = new RecipeDto
+                {
+                    Id = recipeWithIngredients.Id,
+                    Name = recipeWithIngredients.Name,
+                    Kategory = recipeWithIngredients.Kategory,
+                    PreparationTime = recipeWithIngredients.PreparationTime,
+                    PreparationTimeMH = recipeWithIngredients.PreparationTimeMH,
+                    NumberOfServings = recipeWithIngredients.NumberOfServings,
+                    CookingTime = recipeWithIngredients.CookingTime,
+                    CookingTimeMH = recipeWithIngredients.CookingTimeMH,
+                    Difficulty = recipeWithIngredients.Difficulty,
+                    Image = recipeWithIngredients.Image,
+                    Description = recipeWithIngredients.Description,
+                    UserId = recipeWithIngredients.UserId,
+                    Ingredients = recipeWithIngredients.Ingredients.Select(i => new IngridientDto
+                    {
+                        Name = i.Name,
+                        Quantity = i.Quantity,
+                        UnitOfMeasure = i.UnitOfMeasure
+                    }).ToList()
+                };
+
+                return Ok(recipeDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+        }
+
+
+
 
         [HttpGet("GetUserDataByUserId/{userId}")]
         public IActionResult GetUserDataByUserId(int userId)
@@ -186,7 +234,6 @@ namespace Backend.Controllers
                 return BadRequest($"Unable to retrieve user data: {ex.Message}");
             }
         }
-
     }
 }
 

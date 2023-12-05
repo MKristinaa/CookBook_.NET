@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Models
 {
@@ -13,5 +14,6 @@ namespace Backend.Models
         [Required]
         public byte[]? Password { get; set; }
         public byte[]? KeyPassword { get; set; }
+        public List<Recipe> Recipes { get; set; }
     }
 }
