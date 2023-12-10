@@ -4,8 +4,8 @@ namespace Backend.Dto
 {
     public class CommentDto
     {
-        public int IdKorisnika { get; set; }
-        public int IdRecipe { get; set; }
+        public int UserId { get; set; }
+        public int RecipeId { get; set; }
         public string? Text { get; set; }
     }
 }

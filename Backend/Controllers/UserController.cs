@@ -75,14 +75,6 @@ namespace MySecrets.Controllers
             var token = tokenHandler.CreateToken(tokenDescription);
             return tokenHandler.WriteToken(token);
         }
-        /*[HttpPost("post")]
-        public async Task<IActionResult> PostAsync(KorisnikDto korisnik)
-        {
-            uow.KorisnikRepository.Register(korisnik);
-            await uow.SaveAsync();
-            return Ok(korisnik);
-        }
-        */
 
         [HttpPost("/register")]
         public async Task<IActionResult> Register(UserDto loginReq)

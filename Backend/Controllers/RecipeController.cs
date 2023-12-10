@@ -121,21 +121,21 @@ namespace Backend.Controllers
             {
                 var userRecipes = dc.Users
                     .Where(u => u.Id == userId)
-                    .SelectMany(u => u.Recipes) 
-                    .Include(r => r.Ingredients) 
+                    .SelectMany(u => u.Recipes)
+                    .Include(r => r.Ingredients)
                     .Select(r => new
                     {
                         Id = r.Id,
                         Name = r.Name,
                         Kategory = r.Kategory,
-                        PreparationTime= r.PreparationTime,
-                        PreparationTimeMH=r.PreparationTimeMH,
-                        NumberOfServings=r.NumberOfServings,
-                        CookingTime=r.CookingTime,
-                        CookingTimeMH=r.CookingTimeMH,
-                        Difficulty=r.Difficulty,
-                        Image=r.Image,
-                        Description=r.Description,
+                        PreparationTime = r.PreparationTime,
+                        PreparationTimeMH = r.PreparationTimeMH,
+                        NumberOfServings = r.NumberOfServings,
+                        CookingTime = r.CookingTime,
+                        CookingTimeMH = r.CookingTimeMH,
+                        Difficulty = r.Difficulty,
+                        Image = r.Image,
+                        Description = r.Description,
                         Ingredients = r.Ingredients.Select(i => new
                         {
                             Id = i.Id,
@@ -148,7 +148,7 @@ namespace Backend.Controllers
 
                 if (userRecipes == null || !userRecipes.Any())
                 {
-                    return NotFound($"No recipes found for user with ID {userId}.");
+                    return Ok("Nema recepata.");
                 }
 
                 return Ok(userRecipes);
@@ -158,6 +158,8 @@ namespace Backend.Controllers
                 return StatusCode(500, $"Internal server error: {ex}");
             }
         }
+
+
 
         [HttpGet("GetRecipeWithIngredientsById/{recipeId}")]
         public IActionResult GetRecipeWithIngredientsById(int recipeId)
@@ -234,6 +236,41 @@ namespace Backend.Controllers
                 return BadRequest($"Unable to retrieve user data: {ex.Message}");
             }
         }
+
+        [HttpDelete("RemoveIngredient/{recipeId}/{ingredientId}")]
+        public IActionResult RemoveIngredient(int recipeId, int ingredientId)
+        {
+            try
+            {
+                var recipe = dc.Recipes
+                    .Include(r => r.Ingredients)
+                    .FirstOrDefault(r => r.Id == recipeId);
+
+                if (recipe == null)
+                {
+                    return NotFound($"Recipe with ID {recipeId} not found.");
+                }
+
+                var ingredientToRemove = recipe.Ingredients.FirstOrDefault(i => i.Id == ingredientId);
+
+                if (ingredientToRemove == null)
+                {
+                    return NotFound($"Ingredient with ID {ingredientId} not found in the recipe.");
+                }
+
+                recipe.Ingredients.Remove(ingredientToRemove);
+                dc.SaveChanges();
+
+                return Ok("Ingredient successfully removed from the recipe.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+        }
+
     }
+
+
 }
 

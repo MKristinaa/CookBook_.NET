@@ -22,7 +22,9 @@ namespace Backend.Models
         public int UserId { get; set; } 
         public User User { get; set; } 
 
-        public List<Ingredient> Ingredients { get; set; }
+        public List<Ingredient>? Ingredients { get; set; }
+        public ICollection<Comment>? Comments { get; set; }
+        public ICollection<RecipeRating>? Ratings { get; set; }
 
     }
 }
