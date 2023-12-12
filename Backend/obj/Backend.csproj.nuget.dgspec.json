@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Kile\\Desktop\\HCI\\Backend\\Backend\\Backend.csproj": {}
+    "C:\\Users\\Kile\\Desktop\\HCI-projekat\\Backend\\Backend\\Backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Kile\\Desktop\\HCI\\Backend\\Backend\\Backend.csproj": {
+    "C:\\Users\\Kile\\Desktop\\HCI-projekat\\Backend\\Backend\\Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Kile\\Desktop\\HCI\\Backend\\Backend\\Backend.csproj",
+        "projectUniqueName": "C:\\Users\\Kile\\Desktop\\HCI-projekat\\Backend\\Backend\\Backend.csproj",
         "projectName": "Backend",
-        "projectPath": "C:\\Users\\Kile\\Desktop\\HCI\\Backend\\Backend\\Backend.csproj",
+        "projectPath": "C:\\Users\\Kile\\Desktop\\HCI-projekat\\Backend\\Backend\\Backend.csproj",
         "packagesPath": "C:\\Users\\Kile\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Kile\\Desktop\\HCI\\Backend\\Backend\\obj\\",
+        "outputPath": "C:\\Users\\Kile\\Desktop\\HCI-projekat\\Backend\\Backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Kile\\AppData\\Roaming\\NuGet\\NuGet.Config",

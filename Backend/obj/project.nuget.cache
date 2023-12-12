@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "NVpVVFabsXz4uYX5/uiVyxLSylRKl3r/TRPP1itpbyTV3/wRx7eVkZP1D/aP/9NHwgFCwD278/HPy8x3CGXw6Q==",
+  "dgSpecHash": "vQzhbIMR+68T++JLLDSbQF846yKDTAD4C4nf+dpMCPKalWv8aG8yu0eNB4YskIKkCwwCU7wt/1BjMNrGzoxkFw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Kile\\Desktop\\HCI\\Backend\\Backend\\Backend.csproj",
+  "projectFilePath": "C:\\Users\\Kile\\Desktop\\HCI-projekat\\Backend\\Backend\\Backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Kile\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Kile\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.1\\microsoft.aspnetcore.authentication.jwtbearer.6.0.1.nupkg.sha512",

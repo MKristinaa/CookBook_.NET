@@ -27,7 +27,7 @@ namespace Backend.Controllers
 
                 if (existingRating != null)
                 {
-                    return BadRequest("Ocjena već postoji za ovaj recept i korisnika.");
+                    return BadRequest("Vec ste dali ocenu za ovaj recept.");
                 }
 
                 var newRating = new RecipeRating
@@ -47,6 +47,8 @@ namespace Backend.Controllers
                 return StatusCode(500, $"Greška prilikom dodavanja ocjene: {ex.Message}");
             }
         }
+
+
         [HttpGet("GetAverageRating/{recipeId}")]
         public async Task<IActionResult> GetAverageRating(int recipeId)
         {

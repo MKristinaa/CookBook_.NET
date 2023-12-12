@@ -236,41 +236,6 @@ namespace Backend.Controllers
                 return BadRequest($"Unable to retrieve user data: {ex.Message}");
             }
         }
-
-        [HttpDelete("RemoveIngredient/{recipeId}/{ingredientId}")]
-        public IActionResult RemoveIngredient(int recipeId, int ingredientId)
-        {
-            try
-            {
-                var recipe = dc.Recipes
-                    .Include(r => r.Ingredients)
-                    .FirstOrDefault(r => r.Id == recipeId);
-
-                if (recipe == null)
-                {
-                    return NotFound($"Recipe with ID {recipeId} not found.");
-                }
-
-                var ingredientToRemove = recipe.Ingredients.FirstOrDefault(i => i.Id == ingredientId);
-
-                if (ingredientToRemove == null)
-                {
-                    return NotFound($"Ingredient with ID {ingredientId} not found in the recipe.");
-                }
-
-                recipe.Ingredients.Remove(ingredientToRemove);
-                dc.SaveChanges();
-
-                return Ok("Ingredient successfully removed from the recipe.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex}");
-            }
-        }
-
     }
-
-
 }
 
