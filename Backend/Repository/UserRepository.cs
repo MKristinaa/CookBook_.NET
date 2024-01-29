@@ -15,9 +15,10 @@ namespace Backend.Repository
             this.dc = dc;
         }
 
-        public async Task<User> Authenticate(string username, string passwordText)
+        public async Task<User> Authenticate(string usernameOrEmail, string passwordText)
         {
-            var user = await dc.Users!.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await dc.Users!
+                .FirstOrDefaultAsync(x => x.Username == usernameOrEmail || x.Email == usernameOrEmail);
 
             if (user == null || user.KeyPassword == null)
                 return null!;
@@ -26,8 +27,8 @@ namespace Backend.Repository
                 return null!;
 
             return user;
-
         }
+
 
         private bool MatchPasswordHash(string passwordText, byte[]? password, byte[]? passwordKey)
         {
@@ -65,7 +66,9 @@ namespace Backend.Repository
                     Name = user1.Name,
                     Lastname = user1.Lastname,
                     Image = user1.Image,
+                    Verified = user1.Verified,
                     Username = user1.Username,
+                    Email = user1.Email,
                     Password = passwordHash,
                     KeyPassword = passwordKey
                 };
@@ -74,9 +77,22 @@ namespace Backend.Repository
             }
         }
 
-        public async Task<bool> UserAlreadyExists(string userName)
+        public async Task<bool> UserAlreadyExists(string userName, string email)
         {
-            return await dc.Users!.AnyAsync(x => x.Username == userName);
+            return await dc.Users!
+                .AnyAsync(x => x.Username == userName || x.Email == email);
+        }
+
+        public async Task<bool> UserAlreadyExistsByUsername(string userName)
+        {
+            return await dc.Users!
+                .AnyAsync(x => x.Username == userName);
+        }
+
+        public async Task<bool> UserAlreadyExistsByEmail(string email)
+        {
+            return await dc.Users!
+                .AnyAsync(x => x.Email == email);
         }
 
     }

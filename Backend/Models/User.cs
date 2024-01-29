@@ -9,8 +9,11 @@ namespace Backend.Models
         public string? Name { get; set; }
         public string? Lastname { get; set; }
         public string? Image { get; set; }
+        public bool? Verified { get; set; }
         [Required]
         public string? Username { get; set; }
+        [Required]
+        public string? Email { get; set; }
         [Required]
         public byte[]? Password { get; set; }
         public byte[]? KeyPassword { get; set; }

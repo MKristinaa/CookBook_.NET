@@ -68,7 +68,7 @@ namespace Backend.Controllers
             {
                 var comments = await dc.Comments
                     .Where(c => c.RecipeId == recipeId)
-                    .Include(c => c.User) // Uključivanje informacija o korisniku
+                    .Include(c => c.User) 
                     .Select(c => new
                     {
                         c.Id,
